@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option go_package = "github.com/karlsen-network/karlsend/cmd/karlsenwallet/daemon/pb";
+package karlsenwalletd;
+
+service karlsenwalletd {
+  rpc GetBalance (GetBalanceRequest) returns (GetBalanceResponse) {}
+  // Since SendRequest contains a password - this command should only be used on a trusted or secure connection
+  rpc Send(SendRequest) returns (SendResponse) {}
+}
+
+message GetBalanceRequest {
+}
+
+message GetBalanceResponse {
+  uint64 available = 1;
+  uint64 pending = 2;
+  repeated AddressBalances addressBalances = 3;
+}
+
+message AddressBalances {
+  string address = 1;
+  uint64 available = 2;
+  uint64 pending = 3;
+}
+
+// Since SendRequest contains a password - this command should only be used on a trusted or secure connection
+message SendRequest{
+  string toAddress = 1;
+  uint64 amount = 2;
+  string password = 3;
+  repeated string from = 4;
+  bool useExistingChangeAddress = 5;
+  bool isSendAll = 6;
+}
+
+message SendResponse{
+  repeated string txIDs = 1;
+  repeated bytes signedTransactions = 2;
+}
